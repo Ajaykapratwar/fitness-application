@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,5 +51,14 @@ public class ActivityService {
         return activities.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    public ActivityResponse getActivityById(String activityId) {
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() ->
+                        new NoSuchElementException("Activity not found with id: " + activityId)
+                );
+
+        return mapToResponse(activity);
     }
 }
