@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: ai-service
+  mongodb:
+    uri: mongodb+srv://kapratwarajay:Admin123@cluster0.fpl7zfu.mongodb.net/fitnessrecommendation
+    database: fitnessrecommendation
 
 eureka:
   client:
