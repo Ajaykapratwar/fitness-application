@@ -31,7 +31,7 @@ public class GroqService {
                                 "content", question
                         )
                 ),
-                "max_tokens", 1800
+                "max_tokens", 2048
         );
 
         return webClient.post()
