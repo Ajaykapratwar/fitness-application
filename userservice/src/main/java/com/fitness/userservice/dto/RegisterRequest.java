@@ -16,6 +16,8 @@ public class RegisterRequest {
     @Size(min = 8, message = "Password must have at least 8 characters")
     private String password;
 
+    private String keycloakId;
+
     private String firstName;
     private String lastName;
 }
