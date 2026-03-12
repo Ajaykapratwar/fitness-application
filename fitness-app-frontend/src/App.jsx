@@ -43,6 +43,9 @@ function App() {
         // </div>
 
         <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+          <Button variant="contained" color="primary"
+            onClick={() => logOut()}
+          >LogOut</Button>
           <Routes>
             <Route path="/activities" element={<ActivityPage/>} />
             <Route path="/activities/:id" element={<ActivityDetail/>} />
