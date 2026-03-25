@@ -1,60 +1,47 @@
-import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router-dom";
-import { Button } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { setCredentials } from "./store/authSlice";
-import { AuthContext } from "react-oauth2-code-pkce";
-import Box from '@mui/material/Box';
-import ActivityForm from "./components/ActivityForm";
-import ActivityList from "./components/activityList";
-import ActivityDetail from "./components/ActivityDetail";
-
-const ActivityPage = () => {
-  return (
-    <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-      <ActivityForm onActivityAdded={() => console.log("activity added")} />
-      <ActivityList />
-    </Box>
-  );
-};
+import { useContext, useEffect } from 'react';
+import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { AuthContext } from 'react-oauth2-code-pkce';
+import { setCredentials } from './store/authSlice';
+import ProtectedRoute from './components/layout/ProtectedRoute';
+import AppLayout from './components/layout/AppLayout';
+import LoginPage from './pages/auth/LoginPage';
+import DashboardOverview from './pages/dashboard/DashboardOverview';
+import ActivityPage from './pages/dashboard/ActivityPage';
+import ActivityDetail from './pages/dashboard/ActivityDetail';
+import RecommendationsPage from './pages/dashboard/RecommendationsPage';
+import ProfilePage from './pages/profile/ProfilePage';
+import AdminPlaceholder from './pages/admin/AdminPlaceholder';
 
 function App() {
-  const { token, tokenData, logIn, logOut, isAuthenticated } = useContext(AuthContext);
+  const { token, tokenData } = useContext(AuthContext);
   const dispatch = useDispatch();
-  const [ authReady, setAuthReady ] = useState(false);
 
   useEffect(() => {
-    if (token) {
-      dispatch(setCredentials({token, user: tokenData}));
-      setAuthReady(true);
+    if (token && tokenData) {
+      dispatch(setCredentials({ token, user: tokenData }));
     }
   }, [token, tokenData, dispatch]);
 
   return (
     <Router>
-      {!token ? (
-        <Button variant="contained" color="primary"
-          onClick={() => logIn()}
-        >LOGIN</Button>
-      ) : (
-        // <div>
-        //   <pre>{JSON.stringify(tokenData, null, 2)}</pre>
-        //   <pre>{JSON.stringify(token, null, 2)}</pre>
-        // </div>
-
-        <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          <Button variant="contained" color="primary"
-            onClick={() => logOut()}
-          >LogOut</Button>
-          <Routes>
-            <Route path="/activities" element={<ActivityPage/>} />
-            <Route path="/activities/:id" element={<ActivityDetail/>} />
-            <Route path="/" element={token ? <Navigate to={"/activities"} replace /> : <div>Welcome Please Log in </div>} />
-          </Routes>
-        </Box>
-      )}
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<DashboardOverview />} />
+            <Route path="/activities" element={<ActivityPage />} />
+            <Route path="/activities/:id" element={<ActivityDetail />} />
+            <Route path="/recommendations" element={<RecommendationsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/admin/users" element={<AdminPlaceholder title="User Management" />} />
+            <Route path="/admin/health" element={<AdminPlaceholder title="System Health" />} />
+          </Route>
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
